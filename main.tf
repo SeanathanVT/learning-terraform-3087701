@@ -38,9 +38,15 @@ module "autoscaling" {
   min_size = 1
   max_size = 2
 
-  autoscaling_group_target_group_arns   = module.blog_alb.target_group_arns
-  security_groups     = [module.blog_sg.security_group_id]
-  vpc_zone_identifier = module.blog_vpc.public_subnets
+  security_groups            = [module.blog_sg.security_group_id]
+  traffic_source_attachments = {
+    for idx, arn in module.blog_alb.target_group_arns :
+    "tg-${idx}" => {
+      traffic_source_identifier = arn
+      traffic_source_type       = "elbv2" # For ALB/NLB target groups
+    }
+  }
+  vpc_zone_identifier        = module.blog_vpc.public_subnets
 
   image_id      = data.aws_ami.app_ami.id
   instance_type = var.instance_type
