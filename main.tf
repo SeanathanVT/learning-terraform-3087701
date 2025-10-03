@@ -32,7 +32,7 @@ resource "aws_instance" "blog" {
 module "blog_sg" {
   source  = "terraform-aws-modules/security-group/aws"
   version = "5.3.0"
-  name    = "blog_new"
+  name    = "blog"
 
   vpc_id = data.aws_vpc.default.id
 
@@ -42,13 +42,6 @@ module "blog_sg" {
   egress_rules       = ["all-all"]
   egress_cidr_blocks = ["0.0.0.0/0"]
 
-}
-
-resource "aws_security_group" "blog" {
-  name        = "blog"
-  description = "Allow HTTP and HTTPS in. Allow everything out."
-
-  vpc_id = data.aws_vpc.default.id
 }
 
 resource "aws_security_group_rule" "blog_http_in" {
